@@ -1,116 +1,290 @@
-import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  useState,
+} from "react";
 
-import { auth } from "../firebase/firebase";
+import {
+  useNavigate,
+} from "react-router-dom";
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+import {
+  useForm,
+} from "react-hook-form";
 
-  const login = async () => {
-    try {
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
+import toast from "react-hot-toast";
+
+import { useAuth } from "../context/AuthContext";
+
+interface FormData {
+  email: string;
+
+  password: string;
+}
+
+export default function Login() {
+  const navigate = useNavigate();
+
+  const { login } = useAuth();
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const {
+    register,
+
+    handleSubmit,
+
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const onSubmit = (
+    data: FormData
+  ) => {
+    setLoading(true);
+
+    setTimeout(() => {
+      login();
+
+      toast.success(
+        `Welcome back ${data.email}`
       );
 
-      setMessage("Login successful ✅");
+      navigate("/dashboard");
 
-    } catch (error: any) {
-      setMessage("Firebase: " + error.message);
-    }
+      setLoading(false);
+    }, 1400);
   };
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "#050530",
+
         display: "flex",
-        justifyContent: "center",
+
         alignItems: "center",
+
+        justifyContent: "center",
+
+        padding: "30px",
       }}
     >
       <div
+        className="premium-card fade-up"
         style={{
-          width: "400px",
-          background: "#0a0a80",
+          width: "100%",
+          maxWidth: "480px",
+
           padding: "40px",
-          borderRadius: "25px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-          boxShadow: "0 0 30px rgba(0,0,0,0.4)",
+
+          borderRadius: "32px",
+
+          background:
+            "rgba(255,255,255,0.05)",
+
+          border:
+            "1px solid rgba(255,255,255,0.08)",
+
+          backdropFilter:
+            "blur(20px)",
         }}
       >
         <h1
           style={{
-            color: "white",
-            fontSize: "60px",
-            margin: 0,
-            textAlign: "center",
+            fontSize: "52px",
+
+            fontWeight: "bold",
+
+            marginBottom: "10px",
+
+            lineHeight: 1,
           }}
         >
           Silver Bank
         </h1>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{
-            padding: "20px",
-            borderRadius: "15px",
-            border: "none",
-            fontSize: "20px",
-          }}
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{
-            padding: "20px",
-            borderRadius: "15px",
-            border: "none",
-            fontSize: "20px",
-          }}
-        />
-
-        <button
-          onClick={login}
-          style={{
-            padding: "18px",
-            borderRadius: "15px",
-            border: "none",
-            fontSize: "24px",
-            fontWeight: "bold",
-            cursor: "pointer",
-            background:
-              "linear-gradient(to right, #cde7ff, #ff4fc3)",
-            color: "white",
-          }}
-        >
-          Login
-        </button>
-
         <p
           style={{
-            color: "white",
-            textAlign: "center",
-            fontSize: "20px",
+            color: "#9ca3af",
+
+            marginBottom: "35px",
           }}
         >
-          {message}
+          Sign in to continue
         </p>
+
+        <form
+          onSubmit={handleSubmit(
+            onSubmit
+          )}
+        >
+          {/* EMAIL */}
+          <div
+            style={{
+              marginBottom: "20px",
+            }}
+          >
+            <p
+              style={{
+                marginBottom: "10px",
+              }}
+            >
+              Email
+            </p>
+
+            <input
+              placeholder="Enter email"
+              {...register(
+                "email",
+                {
+                  required:
+                    "Email is required",
+                }
+              )}
+              style={{
+                width: "100%",
+
+                padding: "18px",
+
+                borderRadius: "18px",
+
+                border:
+                  "1px solid rgba(255,255,255,0.08)",
+
+                background:
+                  "rgba(255,255,255,0.05)",
+
+                color: "white",
+
+                outline: "none",
+
+                fontSize: "16px",
+              }}
+            />
+
+            {errors.email && (
+              <p
+                style={{
+                  color: "#ef4444",
+
+                  marginTop: "8px",
+
+                  fontSize: "14px",
+                }}
+              >
+                {
+                  errors.email
+                    .message
+                }
+              </p>
+            )}
+          </div>
+
+          {/* PASSWORD */}
+          <div
+            style={{
+              marginBottom: "30px",
+            }}
+          >
+            <p
+              style={{
+                marginBottom: "10px",
+              }}
+            >
+              Password
+            </p>
+
+            <input
+              type="password"
+              placeholder="Enter password"
+              {...register(
+                "password",
+                {
+                  required:
+                    "Password is required",
+
+                  minLength: {
+                    value: 6,
+
+                    message:
+                      "Minimum 6 characters",
+                  },
+                }
+              )}
+              style={{
+                width: "100%",
+
+                padding: "18px",
+
+                borderRadius: "18px",
+
+                border:
+                  "1px solid rgba(255,255,255,0.08)",
+
+                background:
+                  "rgba(255,255,255,0.05)",
+
+                color: "white",
+
+                outline: "none",
+
+                fontSize: "16px",
+              }}
+            />
+
+            {errors.password && (
+              <p
+                style={{
+                  color: "#ef4444",
+
+                  marginTop: "8px",
+
+                  fontSize: "14px",
+                }}
+              >
+                {
+                  errors.password
+                    .message
+                }
+              </p>
+            )}
+          </div>
+
+          {/* BUTTON */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="premium-button"
+            style={{
+              width: "100%",
+
+              border: "none",
+
+              padding: "20px",
+
+              borderRadius: "20px",
+
+              background:
+                "linear-gradient(135deg,#7c3aed,#ff2fb9)",
+
+              color: "white",
+
+              fontWeight: "bold",
+
+              fontSize: "18px",
+
+              cursor: "pointer",
+
+              opacity: loading
+                ? 0.7
+                : 1,
+            }}
+          >
+            {loading
+              ? "Signing In..."
+              : "Sign In"}
+          </button>
+        </form>
       </div>
     </div>
   );
 }
-
-export default Login;

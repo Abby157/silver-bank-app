@@ -1,72 +1,118 @@
-import { useEffect, useState } from "react";
-
 import {
-  onAuthStateChanged,
-  type User,
-} from "firebase/auth";
-
-import { auth } from "./firebase/firebase";
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Wallet from "./pages/Wallet";
+import Cards from "./pages/Cards";
+import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
 
-function App() {
-  const [user, setUser] =
-    useState<User | null>(null);
+import ProtectedRoute from "./components/ProtectedRoute";
 
-  const [showRegister, setShowRegister] =
-    useState(false);
+import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
-  useEffect(() => {
-    const unsubscribe =
-      onAuthStateChanged(
-        auth,
-        (currentUser) => {
-          setUser(currentUser);
-        }
-      );
-
-    return () => unsubscribe();
-  }, []);
-
-  if (user) {
-    return <Dashboard />;
-  }
-
+export default function App() {
   return (
-    <div className="login-container">
-      {showRegister ? (
-        <>
-          <Register />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* REDIRECT */}
+            <Route
+              path="/"
+              element={
+                <Navigate to="/login" />
+              }
+            />
 
-          <p
-            className="switch-text"
-            onClick={() =>
-              setShowRegister(false)
-            }
-          >
-            Already have an account?
-            Login
-          </p>
-        </>
-      ) : (
-        <>
-          <Login />
+            {/* AUTH */}
+            <Route
+              path="/login"
+              element={<Login />}
+            />
 
-          <p
-            className="switch-text"
-            onClick={() =>
-              setShowRegister(true)
-            }
-          >
-            Don’t have an account?
-            Register
-          </p>
-        </>
-      )}
-    </div>
+            <Route
+              path="/register"
+              element={<Register />}
+            />
+
+            {/* DASHBOARD */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* WALLET */}
+            <Route
+              path="/wallet"
+              element={
+                <ProtectedRoute>
+                  <Wallet />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* CARDS */}
+            <Route
+              path="/cards"
+              element={
+                <ProtectedRoute>
+                  <Cards />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ANALYTICS */}
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute>
+                  <Analytics />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* PROFILE */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* SETTINGS */}
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 404 */}
+            <Route
+              path="*"
+              element={<NotFound />}
+            />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
-
-export default App;

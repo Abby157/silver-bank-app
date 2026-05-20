@@ -1,311 +1,366 @@
-import { signOut } from "firebase/auth";
-
-import {
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
-
 import {
   useEffect,
   useState,
 } from "react";
 
-import {
-  auth,
-  db,
-} from "../firebase/firebase";
+import { motion } from "framer-motion";
 
-function Dashboard() {
+import toast from "react-hot-toast";
 
-  const [data, setData] = useState<any>(null);
+import Layout from "../components/Layout";
+import Header from "../components/Header";
+import PremiumCard from "../components/PremiumCard";
+import QuickInsights from "../components/QuickInsights";
+import ActivityPanel from "../components/ActivityPanel";
+import FinancialGoals from "../components/FinancialGoals";
+import Transactions from "../components/Transactions";
+import TransactionHistory from "../components/TransactionHistory";
+import AdvancedTransactions from "../components/AdvancedTransactions";
+import FinanceChart from "../components/FinanceChart";
+import SendMoneyModal from "../components/SendMoneyModal";
+import Loader from "../components/Loader";
 
+export default function Dashboard() {
   const [loading, setLoading] =
     useState(true);
 
-  const [recipient, setRecipient] =
-    useState("");
-
-  const [amount, setAmount] =
-    useState("");
+  const [openModal, setOpenModal] =
+    useState(false);
 
   useEffect(() => {
-    fetchUserData();
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1600);
+
+    return () =>
+      clearTimeout(timer);
   }, []);
 
-  const fetchUserData = async () => {
-
-    const user = auth.currentUser;
-
-    if (!user) return;
-
-    const docRef = doc(
-      db,
-      "users",
-      user.uid
-    );
-
-    const docSnap =
-      await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      setData(docSnap.data());
-    }
-
-    setLoading(false);
-  };
-
-  const handleLogout = async () => {
-    await signOut(auth);
-  };
-
-  const sendMoney = async () => {
-
-    const user = auth.currentUser;
-
-    if (!user || !data) return;
-
-    const sendAmount =
-      Number(amount);
-
-    if (!recipient || !sendAmount) {
-      alert("Fill all fields");
-      return;
-    }
-
-    if (sendAmount > data.balance) {
-      alert("Insufficient balance");
-      return;
-    }
-
-    const newBalance =
-      data.balance - sendAmount;
-
-    const newExpenses =
-      data.expenses + sendAmount;
-
-    const newTransactions = [
-
-      `Transfer to ${recipient} -$${sendAmount}`,
-
-      ...(data.transactions || []),
-
-    ];
-
-    const docRef = doc(
-      db,
-      "users",
-      user.uid
-    );
-
-    await updateDoc(docRef, {
-
-      balance: newBalance,
-
-      expenses: newExpenses,
-
-      transactions:
-        newTransactions,
-
-    });
-
-    setData({
-
-      ...data,
-
-      balance: newBalance,
-
-      expenses: newExpenses,
-
-      transactions:
-        newTransactions,
-
-    });
-
-    setRecipient("");
-
-    setAmount("");
-
-    alert("Transfer Successful 🔥");
-
-  };
-
-  const today =
-    new Date().toLocaleDateString();
-
-  const hour =
-    new Date().getHours();
-
-  let greeting =
-    "Good Evening";
-
-  if (hour < 12) {
-    greeting = "Good Morning";
-  } else if (hour < 18) {
-    greeting = "Good Afternoon";
-  }
-
-  if (loading) {
-    return (
-      <h1
-        style={{
-          color: "white",
-          textAlign: "center",
-          marginTop: "100px",
-        }}
-      >
-        Loading...
-      </h1>
-    );
-  }
-
   return (
+    <Layout>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          {/* HEADER */}
+          <Header />
 
-    <div className="dashboard">
-
-      <div className="top-bar">
-
-        <div>
-
-          <h1>
-            Silver Bank
-          </h1>
-
-          <p>
-            {greeting} 👋
-          </p>
-
-          <p>
-            {auth.currentUser?.email}
-          </p>
-
-          <p>
-            {today}
-          </p>
-
-        </div>
-
-        <button
-          className="logout-btn"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-
-      </div>
-
-      <div className="cards">
-
-        <div className="card">
-          <h3>Balance</h3>
-          <h2>
-            $
-            {data.balance}
-          </h2>
-        </div>
-
-        <div className="card">
-          <h3>Income</h3>
-          <h2>
-            $
-            {data.income}
-          </h2>
-        </div>
-
-        <div className="card">
-          <h3>Expenses</h3>
-          <h2>
-            $
-            {data.expenses}
-          </h2>
-        </div>
-
-        <div className="card">
-          <h3>Savings</h3>
-          <h2>
-            $
-            {data.savings}
-          </h2>
-        </div>
-
-        <div className="card">
-          <h3>Investments</h3>
-          <h2>
-            $
-            {data.investments}
-          </h2>
-        </div>
-
-      </div>
-
-      <div className="transfer-box">
-
-        <h2>
-          Send Money
-        </h2>
-
-        <input
-          type="text"
-          placeholder="Recipient Name"
-          value={recipient}
-          onChange={(e) =>
-            setRecipient(
-              e.target.value
-            )
-          }
-        />
-
-        <input
-          type="number"
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) =>
-            setAmount(
-              e.target.value
-            )
-          }
-        />
-
-        <button
-          onClick={sendMoney}
-        >
-          Send Money
-        </button>
-
-      </div>
-
-      <div className="transactions">
-
-        <h2>
-          Recent Transactions
-        </h2>
-
-        {data.transactions?.map(
-
-          (
-            item: string,
-            index: number
-          ) => (
-
-            <div
-              key={index}
-              className={
-                item.includes("+")
-                  ? "transaction-item income"
-                  : "transaction-item expense"
-              }
+          {/* PAGE TITLE */}
+          <motion.div
+            className="fade-up"
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 0.5,
+            }}
+            style={{
+              marginBottom: "40px",
+            }}
+          >
+            <h1
+              style={{
+                fontSize: "70px",
+                fontWeight: "bold",
+                marginBottom: "10px",
+                lineHeight: 1,
+              }}
             >
-              {item}
+              Dashboard
+            </h1>
+
+            <p
+              style={{
+                color: "#9ca3af",
+              }}
+            >
+              Welcome back to Silver Bank
+            </p>
+          </motion.div>
+
+          {/* TOP GRID */}
+          <div
+            style={{
+              display: "grid",
+
+              gridTemplateColumns:
+                "repeat(auto-fit,minmax(320px,1fr))",
+
+              gap: "28px",
+
+              marginBottom: "30px",
+            }}
+          >
+            {/* LEFT SIDE */}
+            <div>
+              {/* STATS */}
+              <div
+                style={{
+                  display: "grid",
+
+                  gridTemplateColumns:
+                    "repeat(auto-fit,minmax(220px,1fr))",
+
+                  gap: "24px",
+
+                  marginBottom: "24px",
+                }}
+              >
+                {[
+                  {
+                    title:
+                      "Total Balance",
+
+                    amount:
+                      "$24,500",
+                  },
+
+                  {
+                    title:
+                      "Income",
+
+                    amount:
+                      "$8,200",
+                  },
+
+                  {
+                    title:
+                      "Expenses",
+
+                    amount:
+                      "$3,100",
+                  },
+
+                  {
+                    title:
+                      "Savings",
+
+                    amount:
+                      "$12,400",
+                  },
+                ].map((card) => (
+                  <motion.div
+                    key={card.title}
+                    className="premium-card fade-up"
+                    whileHover={{
+                      y: -6,
+                    }}
+                    style={{
+                      padding: "30px",
+
+                      borderRadius:
+                        "28px",
+
+                      background:
+                        "rgba(255,255,255,0.05)",
+
+                      border:
+                        "1px solid rgba(255,255,255,0.08)",
+
+                      backdropFilter:
+                        "blur(20px)",
+                    }}
+                  >
+                    <p
+                      style={{
+                        color:
+                          "#d1d5db",
+
+                        marginBottom:
+                          "16px",
+                      }}
+                    >
+                      {card.title}
+                    </p>
+
+                    <h2
+                      style={{
+                        fontSize:
+                          "42px",
+
+                        fontWeight:
+                          "bold",
+                      }}
+                    >
+                      {card.amount}
+                    </h2>
+
+                    <p
+                      style={{
+                        color:
+                          "#4ade80",
+
+                        marginTop:
+                          "16px",
+
+                        fontWeight:
+                          "bold",
+                      }}
+                    >
+                      +12.5%
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* ACTION BUTTONS */}
+              <div
+                style={{
+                  display: "grid",
+
+                  gridTemplateColumns:
+                    "repeat(auto-fit,minmax(180px,1fr))",
+
+                  gap: "20px",
+                }}
+              >
+                {[
+                  "Send",
+                  "Receive",
+                  "Deposit",
+                  "Withdraw",
+                ].map((button) => (
+                  <motion.button
+                    key={button}
+                    onClick={() => {
+                      if (
+                        button ===
+                        "Send"
+                      ) {
+                        setOpenModal(
+                          true
+                        );
+                      } else {
+                        toast.success(
+                          `${button} action successful`
+                        );
+                      }
+                    }}
+                    className="premium-button fade-up"
+                    whileHover={{
+                      y: -4,
+                    }}
+                    whileTap={{
+                      scale: 0.96,
+                    }}
+                    style={{
+                      border: "none",
+
+                      padding: "22px",
+
+                      borderRadius:
+                        "22px",
+
+                      background:
+                        "linear-gradient(135deg,#7c3aed,#ff2fb9)",
+
+                      color:
+                        "white",
+
+                      fontWeight:
+                        "bold",
+
+                      fontSize:
+                        "16px",
+
+                      cursor:
+                        "pointer",
+
+                      boxShadow:
+                        "0 10px 30px rgba(255,47,185,0.25)",
+                    }}
+                  >
+                    {button}
+                  </motion.button>
+                ))}
+              </div>
             </div>
 
-          )
-        )}
+            {/* RIGHT SIDE */}
+            <motion.div
+              className="fade-up"
+              initial={{
+                opacity: 0,
+                x: 20,
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+              }}
+              transition={{
+                duration: 0.5,
+              }}
+            >
+              <PremiumCard />
+            </motion.div>
+          </div>
 
-      </div>
+          {/* REAL CHART */}
+          <FinanceChart />
 
-    </div>
+          {/* QUICK INSIGHTS */}
+          <QuickInsights />
 
+          {/* FINANCIAL GOALS */}
+          <FinancialGoals />
+
+          {/* BOTTOM GRID */}
+          <div
+            style={{
+              display: "grid",
+
+              gridTemplateColumns:
+                "repeat(auto-fit,minmax(320px,1fr))",
+
+              gap: "28px",
+
+              marginTop: "30px",
+            }}
+          >
+            <div className="fade-up">
+              <Transactions />
+            </div>
+
+            <div className="fade-up">
+              <ActivityPanel />
+            </div>
+          </div>
+
+          {/* TRANSACTION HISTORY */}
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 0.6,
+              delay: 0.8,
+            }}
+          >
+            <TransactionHistory />
+          </motion.div>
+
+          {/* ADVANCED TABLE */}
+          <AdvancedTransactions />
+        </>
+      )}
+
+      {/* SEND MONEY MODAL */}
+      <SendMoneyModal
+        open={openModal}
+        onClose={() =>
+          setOpenModal(false)
+        }
+      />
+    </Layout>
   );
 }
-
-export default Dashboard;

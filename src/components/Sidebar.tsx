@@ -1,166 +1,127 @@
-function Sidebar() {
-  const menuItems = [
-    "Dashboard",
-    "Accounts",
-    "Cards",
-    "Transfers",
-    "Analytics",
-    "Settings",
-  ];
+import { NavLink } from "react-router-dom";
 
+const menuItems = [
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+  },
+
+  {
+    name: "Wallet",
+    path: "/wallet",
+  },
+
+  {
+    name: "Cards",
+    path: "/cards",
+  },
+
+  {
+    name: "Analytics",
+    path: "/analytics",
+  },
+
+  {
+    name: "Profile",
+    path: "/profile",
+  },
+
+  {
+    name: "Settings",
+    path: "/settings",
+  },
+];
+
+export default function Sidebar() {
   return (
     <div
       style={{
-        width: "260px",
+        width: "280px",
+
         minHeight: "100vh",
-        background: "#08175c",
-        padding: "35px 25px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        borderRight: "1px solid rgba(255,255,255,0.08)",
+
+        padding: "30px 20px",
+
+        background:
+          "rgba(15,23,42,0.92)",
+
+        borderRight:
+          "1px solid rgba(255,255,255,0.08)",
+
+        backdropFilter:
+          "blur(20px)",
+
         position: "sticky",
+
         top: 0,
       }}
     >
-      <div>
-        {/* LOGO */}
-        <div
-          style={{
-            marginBottom: "50px",
-          }}
-        >
-          <h1
-            style={{
-              color: "white",
-              fontSize: "42px",
-              lineHeight: "1",
-              marginBottom: "10px",
-            }}
-          >
-            Silver
-            <br />
-            Bank
-          </h1>
-
-          <p
-            style={{
-              color: "#9db3ff",
-              fontSize: "14px",
-            }}
-          >
-            Premium Banking
-          </p>
-        </div>
-
-        {/* MENU */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "18px",
-          }}
-        >
-          {menuItems.map((item, index) => (
-            <button
-              key={index}
-              className="card-hover"
-              style={{
-                background:
-                  item === "Dashboard"
-                    ? "linear-gradient(90deg,#80b3ff,#ff4fd8)"
-                    : "#0d216f",
-                border: "none",
-                padding: "18px",
-                borderRadius: "16px",
-                color: "white",
-                fontSize: "16px",
-                fontWeight: "bold",
-                cursor: "pointer",
-                textAlign: "left",
-              }}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* USER CARD */}
+      {/* LOGO */}
       <div
-        className="card-hover"
         style={{
-          background: "#0d216f",
-          borderRadius: "22px",
-          padding: "20px",
-          marginTop: "40px",
+          marginBottom: "50px",
         }}
       >
-        <div
+        <h1
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "15px",
-            marginBottom: "15px",
-          }}
-        >
-          <div
-            style={{
-              width: "55px",
-              height: "55px",
-              borderRadius: "50%",
-              background:
-                "linear-gradient(135deg,#80b3ff,#ff4fd8)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontWeight: "bold",
-              fontSize: "22px",
-            }}
-          >
-            A
-          </div>
-
-          <div>
-            <h3
-              style={{
-                color: "white",
-                marginBottom: "4px",
-              }}
-            >
-              ABBY
-            </h3>
-
-            <p
-              style={{
-                color: "#9db3ff",
-                fontSize: "14px",
-              }}
-            >
-              Premium User
-            </p>
-          </div>
-        </div>
-
-        <button
-          style={{
-            width: "100%",
-            padding: "14px",
-            border: "none",
-            borderRadius: "14px",
-            background:
-              "linear-gradient(90deg,#80b3ff,#ff4fd8)",
-            color: "white",
+            fontSize: "54px",
             fontWeight: "bold",
-            cursor: "pointer",
+            lineHeight: 1,
           }}
         >
-          Logout
-        </button>
+          Silver
+          <br />
+          Bank
+        </h1>
+
+        <p
+          style={{
+            color: "#9ca3af",
+            marginTop: "12px",
+          }}
+        >
+          Premium Finance
+        </p>
+      </div>
+
+      {/* MENU */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "14px",
+        }}
+      >
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.path}
+            style={({ isActive }) => ({
+              textDecoration: "none",
+
+              padding: "18px 20px",
+
+              borderRadius: "20px",
+
+              background: isActive
+                ? "linear-gradient(135deg,#7c3aed,#ff2fb9)"
+                : "rgba(255,255,255,0.05)",
+
+              color: "white",
+
+              fontWeight: "bold",
+
+              transition: "0.3s",
+
+              boxShadow: isActive
+                ? "0 10px 30px rgba(255,47,185,0.25)"
+                : "none",
+            })}
+          >
+            {item.name}
+          </NavLink>
+        ))}
       </div>
     </div>
   );
 }
-
-export default Sidebar;

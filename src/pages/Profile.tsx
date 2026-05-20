@@ -1,122 +1,342 @@
-function Profile() {
+import {
+  useState,
+} from "react";
+
+import toast from "react-hot-toast";
+
+import Layout from "../components/Layout";
+import Header from "../components/Header";
+
+export default function Profile() {
+  const [name, setName] =
+    useState("Abby Cyrus");
+
+  const [email, setEmail] =
+    useState(
+      "abby@silverbank.com"
+    );
+
+  const saveProfile = () => {
+    toast.success(
+      "Profile updated successfully"
+    );
+  };
+
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#060b26",
-        color: "white",
-        padding: "40px",
-        fontFamily: "Arial",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: "52px",
-          marginBottom: "30px",
-        }}
-      >
-        My Profile
-      </h1>
+    <Layout>
+      <Header />
 
+      {/* TITLE */}
       <div
+        className="fade-up"
         style={{
-          background: "#0f1b4c",
-          borderRadius: "30px",
-          padding: "40px",
-          maxWidth: "700px",
-          margin: "auto",
-          textAlign: "center",
-          boxShadow: "0 0 25px rgba(236,72,153,0.2)",
+          marginBottom: "40px",
         }}
       >
-        <img
-          src="https://i.pravatar.cc/200"
-          alt="profile"
+        <h1
           style={{
-            width: "140px",
-            height: "140px",
-            borderRadius: "50%",
-            marginBottom: "20px",
-            border: "4px solid #ec4899",
-          }}
-        />
+            fontSize: "64px",
 
-        <h2
-          style={{
-            fontSize: "36px",
             marginBottom: "10px",
           }}
         >
-          ABBY
-        </h2>
+          Profile
+        </h1>
 
         <p
           style={{
-            color: "#cbd5e1",
-            marginBottom: "30px",
+            color: "#9ca3af",
           }}
         >
-          abby@silverbank.com
+          Manage your banking identity
         </p>
+      </div>
 
+      {/* PROFILE GRID */}
+      <div
+        style={{
+          display: "grid",
+
+          gridTemplateColumns:
+            "repeat(auto-fit,minmax(320px,1fr))",
+
+          gap: "28px",
+        }}
+      >
+        {/* LEFT CARD */}
         <div
+          className="premium-card fade-up"
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "20px",
-            marginTop: "30px",
+            padding: "35px",
+
+            borderRadius: "30px",
+
+            background:
+              "rgba(255,255,255,0.05)",
+
+            border:
+              "1px solid rgba(255,255,255,0.08)",
+
+            backdropFilter:
+              "blur(20px)",
+
+            textAlign: "center",
           }}
         >
+          {/* AVATAR */}
           <div
-            className="card-hover"
-            style={cardStyle}
-          >
-            <h3>Account Type</h3>
-            <p>Premium Banking</p>
-          </div>
+            style={{
+              width: "120px",
 
-          <div
-            className="card-hover"
-            style={cardStyle}
-          >
-            <h3>Card Status</h3>
-            <p>Active</p>
-          </div>
+              height: "120px",
 
-          <div
-            className="card-hover"
-            style={cardStyle}
-          >
-            <h3>Currency</h3>
-            <p>USD Dollar</p>
-          </div>
+              borderRadius: "50%",
 
-          <div
-            className="card-hover"
-            style={cardStyle}
+              margin: "0 auto 20px",
+
+              background:
+                "linear-gradient(135deg,#7c3aed,#ff2fb9)",
+            }}
+          />
+
+          <h2
+            style={{
+              fontSize: "30px",
+
+              marginBottom: "8px",
+            }}
           >
-            <h3>Security</h3>
-            <p>2FA Enabled</p>
+            {name}
+          </h2>
+
+          <p
+            style={{
+              color: "#9ca3af",
+
+              marginBottom: "30px",
+            }}
+          >
+            Premium Banking Client
+          </p>
+
+          {/* STATS */}
+          <div
+            style={{
+              display: "grid",
+
+              gridTemplateColumns:
+                "repeat(2,1fr)",
+
+              gap: "18px",
+            }}
+          >
+            {[
+              {
+                label:
+                  "Transactions",
+
+                value:
+                  "1,248",
+              },
+
+              {
+                label:
+                  "Cards",
+
+                value: "4",
+              },
+
+              {
+                label:
+                  "Investments",
+
+                value:
+                  "$12K",
+              },
+
+              {
+                label:
+                  "Rewards",
+
+                value:
+                  "8,420",
+              },
+            ].map((item) => (
+              <div
+                key={item.label}
+                style={{
+                  padding: "20px",
+
+                  borderRadius: "20px",
+
+                  background:
+                    "rgba(255,255,255,0.05)",
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize:
+                      "24px",
+                  }}
+                >
+                  {item.value}
+                </h3>
+
+                <p
+                  style={{
+                    color:
+                      "#9ca3af",
+
+                    marginTop:
+                      "8px",
+                  }}
+                >
+                  {item.label}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
-        <button
-          className="action-btn"
+        {/* RIGHT CARD */}
+        <div
+          className="premium-card fade-up"
           style={{
-            marginTop: "40px",
+            padding: "35px",
+
+            borderRadius: "30px",
+
+            background:
+              "rgba(255,255,255,0.05)",
+
+            border:
+              "1px solid rgba(255,255,255,0.08)",
+
+            backdropFilter:
+              "blur(20px)",
           }}
         >
-          Edit Profile
-        </button>
+          <h2
+            style={{
+              fontSize: "32px",
+
+              marginBottom: "30px",
+            }}
+          >
+            Edit Profile
+          </h2>
+
+          {/* NAME */}
+          <div
+            style={{
+              marginBottom: "24px",
+            }}
+          >
+            <p
+              style={{
+                marginBottom: "10px",
+              }}
+            >
+              Full Name
+            </p>
+
+            <input
+              value={name}
+              onChange={(e) =>
+                setName(
+                  e.target.value
+                )
+              }
+              style={{
+                width: "100%",
+
+                padding: "18px",
+
+                borderRadius: "18px",
+
+                border:
+                  "1px solid rgba(255,255,255,0.08)",
+
+                background:
+                  "rgba(255,255,255,0.05)",
+
+                color: "white",
+
+                outline: "none",
+              }}
+            />
+          </div>
+
+          {/* EMAIL */}
+          <div
+            style={{
+              marginBottom: "30px",
+            }}
+          >
+            <p
+              style={{
+                marginBottom: "10px",
+              }}
+            >
+              Email
+            </p>
+
+            <input
+              value={email}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+              style={{
+                width: "100%",
+
+                padding: "18px",
+
+                borderRadius: "18px",
+
+                border:
+                  "1px solid rgba(255,255,255,0.08)",
+
+                background:
+                  "rgba(255,255,255,0.05)",
+
+                color: "white",
+
+                outline: "none",
+              }}
+            />
+          </div>
+
+          {/* SAVE */}
+          <button
+            onClick={saveProfile}
+            className="premium-button"
+            style={{
+              border: "none",
+
+              width: "100%",
+
+              padding: "20px",
+
+              borderRadius: "22px",
+
+              background:
+                "linear-gradient(135deg,#7c3aed,#ff2fb9)",
+
+              color: "white",
+
+              fontWeight: "bold",
+
+              fontSize: "16px",
+
+              cursor: "pointer",
+            }}
+          >
+            Save Profile
+          </button>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 }
-
-const cardStyle = {
-  background: "#091233",
-  borderRadius: "20px",
-  padding: "25px",
-};
-
-export default Profile;
