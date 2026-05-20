@@ -283,6 +283,35 @@ export default function Login() {
               ? "Signing In..."
               : "Sign In"}
           </button>
+
+          {/* REGISTER LINK */}
+          <p
+            style={{
+              marginTop: "20px",
+
+              textAlign: "center",
+
+              color: "#9ca3af",
+            }}
+          >
+            Don’t have an account?{" "}
+            <span
+              onClick={() =>
+                navigate(
+                  "/register"
+                )
+              }
+              style={{
+                color: "#ff2fb9",
+
+                cursor: "pointer",
+
+                fontWeight: "bold",
+              }}
+            >
+              Register
+            </span>
+          </p>
         </form>
       </div>
     </div>
