@@ -72,7 +72,10 @@ export default function Login() {
         className="premium-card fade-up"
         style={{
           width: "100%",
+
           maxWidth: "480px",
+
+          minHeight: "620px",
 
           padding: "40px",
 
@@ -287,11 +290,13 @@ export default function Login() {
           {/* REGISTER LINK */}
           <p
             style={{
-              marginTop: "20px",
+              marginTop: "24px",
 
               textAlign: "center",
 
               color: "#9ca3af",
+
+              fontSize: "15px",
             }}
           >
             Don’t have an account?{" "}
